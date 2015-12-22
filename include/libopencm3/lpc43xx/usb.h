@@ -2,6 +2,7 @@
  * This file is part of the libopencm3 project.
  *
  * Copyright (C) 2012 Michael Ossmann <mike@ossmann.com>
+ * Copyright (C) 2015 Dominic Spill <dominicgs@gmail.com>
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -1332,11 +1333,1072 @@ to issue an interrupt the next time it advances asynchronous schedule */
 #define USB0_ENDPTCTRL_TXE (1 << USB0_ENDPTCTRL_TXE_SHIFT)
 
 
-
-
-
 /* --- USB1 registers ------------------------------------------------------ */
-/* TODO */
+
+/* Device/host capability registers */
+
+/* Capability register length */
+#define USB1_CAPLENGTH                  MMIO32(USB1_BASE + 0x100)
+
+/* Host controller structural parameters */
+#define USB1_HCSPARAMS                  MMIO32(USB1_BASE + 0x104)
+
+/* Host controller capability parameters */
+#define USB1_HCCPARAMS                  MMIO32(USB1_BASE + 0x108)
+
+/* Device interface version number */
+#define USB1_DCIVERSION                 MMIO32(USB1_BASE + 0x120)
+
+/* Device controller capability parameters */
+#define USB1_DCCPARAMS                  MMIO32(USB1_BASE + 0x124)
+
+
+/* Device/host operational registers */
+
+/* USB command (device mode) */
+#define USB1_USBCMD_D                   MMIO32(USB1_BASE + 0x140)
+
+/* USB command (host mode) */
+#define USB1_USBCMD_H                   MMIO32(USB1_BASE + 0x140)
+
+/* USB status (device mode) */
+#define USB1_USBSTS_D                   MMIO32(USB1_BASE + 0x144)
+
+/* USB status (host mode) */
+#define USB1_USBSTS_H                   MMIO32(USB1_BASE + 0x144)
+
+/* USB interrupt enable (device mode) */
+#define USB1_USBINTR_D                  MMIO32(USB1_BASE + 0x148)
+
+/* USB interrupt enable (host mode) */
+#define USB1_USBINTR_H                  MMIO32(USB1_BASE + 0x148)
+
+/* USB frame index (device mode) */
+#define USB1_FRINDEX_D                  MMIO32(USB1_BASE + 0x14C)
+
+/* USB frame index (host mode) */
+#define USB1_FRINDEX_H                  MMIO32(USB1_BASE + 0x14C)
+
+/* USB device address (device mode) */
+#define USB1_DEVICEADDR                 MMIO32(USB1_BASE + 0x154)
+
+/* Frame list base address (host mode) */
+#define USB1_PERIODICLISTBASE           MMIO32(USB1_BASE + 0x154)
+
+/* Address of endpoint list in memory */
+#define USB1_ENDPOINTLISTADDR           MMIO32(USB1_BASE + 0x158)
+
+/* Asynchronous list address */
+#define USB1_ASYNCLISTADDR              MMIO32(USB1_BASE + 0x158)
+
+/* Asynchronous buffer status for embedded TT (host mode) */
+#define USB1_TTCTRL                     MMIO32(USB1_BASE + 0x15C)
+
+/* Programmable burst size */
+#define USB1_BURSTSIZE                  MMIO32(USB1_BASE + 0x160)
+
+/* Host transmit pre-buffer packet tuning (host mode) */
+#define USB1_TXFILLTUNING               MMIO32(USB1_BASE + 0x164)
+
+/* Indirect access to the ULPI PHY registers */
+#define USB1_ULPIVIEWPORT               MMIO32(USB1_BASE + 0x170)
+
+/* Length of virtual frame */
+#define USB1_BINTERVAL                  MMIO32(USB1_BASE + 0x174)
+
+/* Endpoint NAK (device mode) */
+#define USB1_ENDPTNAK                   MMIO32(USB1_BASE + 0x178)
+
+/* Endpoint NAK Enable (device mode) */
+#define USB1_ENDPTNAKEN                 MMIO32(USB1_BASE + 0x17C)
+
+/* Port 1 status/control (device mode) */
+#define USB1_PORTSC1_D                  MMIO32(USB1_BASE + 0x184)
+
+/* Port 1 status/control (host mode) */
+#define USB1_PORTSC1_H                  MMIO32(USB1_BASE + 0x184)
+
+/* USB device mode (device mode) */
+#define USB1_USBMODE_D                  MMIO32(USB1_BASE + 0x1A8)
+
+/* USB device mode (host mode) */
+#define USB1_USBMODE_H                  MMIO32(USB1_BASE + 0x1A8)
+
+
+/* Device endpoint registers */
+
+/* Endpoint setup status */
+#define USB1_ENDPTSETUPSTAT             MMIO32(USB1_BASE + 0x1AC)
+
+/* Endpoint initialization */
+#define USB1_ENDPTPRIME                 MMIO32(USB1_BASE + 0x1B0)
+
+/* Endpoint de-initialization */
+#define USB1_ENDPTFLUSH                 MMIO32(USB1_BASE + 0x1B4)
+
+/* Endpoint status */
+#define USB1_ENDPTSTAT                  MMIO32(USB1_BASE + 0x1B8)
+
+/* Endpoint complete */
+#define USB1_ENDPTCOMPLETE              MMIO32(USB1_BASE + 0x1BC)
+
+/* Endpoint control */
+#define USB1_ENDPTCTRL(logical_ep)      MMIO32(USB1_BASE + 0x1C0 + \
+							(logical_ep * 4))
+
+/* Endpoint control 0 */
+#define USB1_ENDPTCTRL0                 USB1_ENDPTCTRL(0)
+
+/* Endpoint control 1 */
+#define USB1_ENDPTCTRL1                 USB1_ENDPTCTRL(1)
+
+/* Endpoint control 2 */
+#define USB1_ENDPTCTRL2                 USB1_ENDPTCTRL(2)
+
+/* Endpoint control 3 */
+#define USB1_ENDPTCTRL3                 USB1_ENDPTCTRL(3)
+
+/* --- USB1_CAPLENGTH values ------------------------------------ */
+
+/* CAPLENGTH: Indicates offset to add to the register base address at the
+ beginning of the Operational Register */
+#define USB1_CAPLENGTH_CAPLENGTH_SHIFT (0)
+#define USB1_CAPLENGTH_CAPLENGTH_MASK (0xff << USB1_CAPLENGTH_CAPLENGTH_SHIFT)
+#define USB1_CAPLENGTH_CAPLENGTH(x) ((x) << USB1_CAPLENGTH_CAPLENGTH_SHIFT)
+
+/* HCIVERSION: BCD encoding of the EHCI revision number supported by this host
+ controller */
+#define USB1_CAPLENGTH_HCIVERSION_SHIFT (8)
+#define USB1_CAPLENGTH_HCIVERSION_MASK \
+			(0xffff << USB1_CAPLENGTH_HCIVERSION_SHIFT)
+#define USB1_CAPLENGTH_HCIVERSION(x) ((x) << USB1_CAPLENGTH_HCIVERSION_SHIFT)
+
+/* --- USB1_HCSPARAMS values ------------------------------------ */
+
+/* N_PORTS: Number of downstream ports */
+#define USB1_HCSPARAMS_N_PORTS_SHIFT (0)
+#define USB1_HCSPARAMS_N_PORTS_MASK (0xf << USB1_HCSPARAMS_N_PORTS_SHIFT)
+#define USB1_HCSPARAMS_N_PORTS(x) ((x) << USB1_HCSPARAMS_N_PORTS_SHIFT)
+
+/* PPC: Port Power Control */
+#define USB1_HCSPARAMS_PPC_SHIFT (4)
+#define USB1_HCSPARAMS_PPC (1 << USB1_HCSPARAMS_PPC_SHIFT)
+
+/* N_PCC: Number of Ports per Companion Controller */
+#define USB1_HCSPARAMS_N_PCC_SHIFT (8)
+#define USB1_HCSPARAMS_N_PCC_MASK (0xf << USB1_HCSPARAMS_N_PCC_SHIFT)
+#define USB1_HCSPARAMS_N_PCC(x) ((x) << USB1_HCSPARAMS_N_PCC_SHIFT)
+
+/* N_CC: Number of Companion Controller */
+#define USB1_HCSPARAMS_N_CC_SHIFT (12)
+#define USB1_HCSPARAMS_N_CC_MASK (0xf << USB1_HCSPARAMS_N_CC_SHIFT)
+#define USB1_HCSPARAMS_N_CC(x) ((x) << USB1_HCSPARAMS_N_CC_SHIFT)
+
+/* PI: Port indicators */
+#define USB1_HCSPARAMS_PI_SHIFT (16)
+#define USB1_HCSPARAMS_PI (1 << USB1_HCSPARAMS_PI_SHIFT)
+
+/* N_PTT: Number of Ports per Transaction Translator */
+#define USB1_HCSPARAMS_N_PTT_SHIFT (20)
+#define USB1_HCSPARAMS_N_PTT_MASK (0xf << USB1_HCSPARAMS_N_PTT_SHIFT)
+#define USB1_HCSPARAMS_N_PTT(x) ((x) << USB1_HCSPARAMS_N_PTT_SHIFT)
+
+/* N_TT: Number of Transaction Translators */
+#define USB1_HCSPARAMS_N_TT_SHIFT (24)
+#define USB1_HCSPARAMS_N_TT_MASK (0xf << USB1_HCSPARAMS_N_TT_SHIFT)
+#define USB1_HCSPARAMS_N_TT(x) ((x) << USB1_HCSPARAMS_N_TT_SHIFT)
+
+/* --- USB1_HCCPARAMS values ------------------------------------ */
+
+/* ADC: 64-bit Addressing Capability */
+#define USB1_HCCPARAMS_ADC_SHIFT (0)
+#define USB1_HCCPARAMS_ADC (1 << USB1_HCCPARAMS_ADC_SHIFT)
+
+/* PFL: Programmable Frame List Flag */
+#define USB1_HCCPARAMS_PFL_SHIFT (1)
+#define USB1_HCCPARAMS_PFL (1 << USB1_HCCPARAMS_PFL_SHIFT)
+
+/* ASP: Asynchronous Schedule Park Capability */
+#define USB1_HCCPARAMS_ASP_SHIFT (2)
+#define USB1_HCCPARAMS_ASP (1 << USB1_HCCPARAMS_ASP_SHIFT)
+
+/* IST: Isochronous Scheduling Threshold */
+#define USB1_HCCPARAMS_IST_SHIFT (4)
+#define USB1_HCCPARAMS_IST_MASK (0xf << USB1_HCCPARAMS_IST_SHIFT)
+#define USB1_HCCPARAMS_IST(x) ((x) << USB1_HCCPARAMS_IST_SHIFT)
+
+/* EECP: EHCI Extended Capabilities Pointer */
+#define USB1_HCCPARAMS_EECP_SHIFT (8)
+#define USB1_HCCPARAMS_EECP_MASK (0xf << USB1_HCCPARAMS_EECP_SHIFT)
+#define USB1_HCCPARAMS_EECP(x) ((x) << USB1_HCCPARAMS_EECP_SHIFT)
+
+/* --- USB1_DCCPARAMS values ------------------------------------ */
+
+/* DEN: Device Endpoint Number */
+#define USB1_DCCPARAMS_DEN_SHIFT (0)
+#define USB1_DCCPARAMS_DEN_MASK (0x1f << USB1_DCCPARAMS_DEN_SHIFT)
+#define USB1_DCCPARAMS_DEN(x) ((x) << USB1_DCCPARAMS_DEN_SHIFT)
+
+/* DC: Device Capable */
+#define USB1_DCCPARAMS_DC_SHIFT (7)
+#define USB1_DCCPARAMS_DC (1 << USB1_DCCPARAMS_DC_SHIFT)
+
+/* HC: Host Capable */
+#define USB1_DCCPARAMS_HC_SHIFT (8)
+#define USB1_DCCPARAMS_HC (1 << USB1_DCCPARAMS_HC_SHIFT)
+
+/* --- USB1_USBCMD_D values ------------------------------------- */
+
+/* RS: Run/Stop */
+#define USB1_USBCMD_D_RS_SHIFT (0)
+#define USB1_USBCMD_D_RS (1 << USB1_USBCMD_D_RS_SHIFT)
+
+/* RST: Controller reset */
+#define USB1_USBCMD_D_RST_SHIFT (1)
+#define USB1_USBCMD_D_RST (1 << USB1_USBCMD_D_RST_SHIFT)
+
+/* SUTW: Setup trip wire */
+#define USB1_USBCMD_D_SUTW_SHIFT (13)
+#define USB1_USBCMD_D_SUTW (1 << USB1_USBCMD_D_SUTW_SHIFT)
+
+/* ATDTW: Add dTD trip wire */
+#define USB1_USBCMD_D_ATDTW_SHIFT (14)
+#define USB1_USBCMD_D_ATDTW (1 << USB1_USBCMD_D_ATDTW_SHIFT)
+
+/* ITC: Interrupt threshold control */
+#define USB1_USBCMD_D_ITC_SHIFT (16)
+#define USB1_USBCMD_D_ITC_MASK (0xff << USB1_USBCMD_D_ITC_SHIFT)
+#define USB1_USBCMD_D_ITC(x) ((x) << USB1_USBCMD_D_ITC_SHIFT)
+
+/* --- USB1_USBCMD_H values ------------------------------------- */
+
+/* RS: Run/Stop */
+#define USB1_USBCMD_H_RS_SHIFT (0)
+#define USB1_USBCMD_H_RS (1 << USB1_USBCMD_H_RS_SHIFT)
+
+/* RST: Controller reset */
+#define USB1_USBCMD_H_RST_SHIFT (1)
+#define USB1_USBCMD_H_RST (1 << USB1_USBCMD_H_RST_SHIFT)
+
+/* FS0: Bit 0 of the Frame List Size bits */
+#define USB1_USBCMD_H_FS0_SHIFT (2)
+#define USB1_USBCMD_H_FS0 (1 << USB1_USBCMD_H_FS0_SHIFT)
+
+/* FS1: Bit 1 of the Frame List Size bits */
+#define USB1_USBCMD_H_FS1_SHIFT (3)
+#define USB1_USBCMD_H_FS1 (1 << USB1_USBCMD_H_FS1_SHIFT)
+
+/* PSE: This bit controls whether the host controller skips processing the
+periodic schedule */
+#define USB1_USBCMD_H_PSE_SHIFT (4)
+#define USB1_USBCMD_H_PSE (1 << USB1_USBCMD_H_PSE_SHIFT)
+
+/* ASE: This bit controls whether the host controller skips processing the
+asynchronous schedule */
+#define USB1_USBCMD_H_ASE_SHIFT (5)
+#define USB1_USBCMD_H_ASE (1 << USB1_USBCMD_H_ASE_SHIFT)
+
+/* IAA: This bit is used as a doorbell by software to tell the host controller
+to issue an interrupt the next time it advances asynchronous schedule */
+#define USB1_USBCMD_H_IAA_SHIFT (6)
+#define USB1_USBCMD_H_IAA (1 << USB1_USBCMD_H_IAA_SHIFT)
+
+/* ASP1_0: Asynchronous schedule park mode */
+#define USB1_USBCMD_H_ASP1_0_SHIFT (8)
+#define USB1_USBCMD_H_ASP1_0_MASK (0x3 << USB1_USBCMD_H_ASP1_0_SHIFT)
+#define USB1_USBCMD_H_ASP1_0(x) ((x) << USB1_USBCMD_H_ASP1_0_SHIFT)
+
+/* ASPE: Asynchronous Schedule Park Mode Enable */
+#define USB1_USBCMD_H_ASPE_SHIFT (11)
+#define USB1_USBCMD_H_ASPE (1 << USB1_USBCMD_H_ASPE_SHIFT)
+
+/* FS2: Bit 2 of the Frame List Size bits */
+#define USB1_USBCMD_H_FS2_SHIFT (15)
+#define USB1_USBCMD_H_FS2 (1 << USB1_USBCMD_H_FS2_SHIFT)
+
+/* ITC: Interrupt threshold control */
+#define USB1_USBCMD_H_ITC_SHIFT (16)
+#define USB1_USBCMD_H_ITC_MASK (0xff << USB1_USBCMD_H_ITC_SHIFT)
+#define USB1_USBCMD_H_ITC(x) ((x) << USB1_USBCMD_H_ITC_SHIFT)
+
+/* --- USB1_USBSTS_D values ------------------------------------- */
+
+/* UI: USB interrupt */
+#define USB1_USBSTS_D_UI_SHIFT (0)
+#define USB1_USBSTS_D_UI (1 << USB1_USBSTS_D_UI_SHIFT)
+
+/* UEI: USB error interrupt */
+#define USB1_USBSTS_D_UEI_SHIFT (1)
+#define USB1_USBSTS_D_UEI (1 << USB1_USBSTS_D_UEI_SHIFT)
+
+/* PCI: Port change detect */
+#define USB1_USBSTS_D_PCI_SHIFT (2)
+#define USB1_USBSTS_D_PCI (1 << USB1_USBSTS_D_PCI_SHIFT)
+
+/* URI: USB reset received */
+#define USB1_USBSTS_D_URI_SHIFT (6)
+#define USB1_USBSTS_D_URI (1 << USB1_USBSTS_D_URI_SHIFT)
+
+/* SRI: SOF received */
+#define USB1_USBSTS_D_SRI_SHIFT (7)
+#define USB1_USBSTS_D_SRI (1 << USB1_USBSTS_D_SRI_SHIFT)
+
+/* SLI: DCSuspend */
+#define USB1_USBSTS_D_SLI_SHIFT (8)
+#define USB1_USBSTS_D_SLI (1 << USB1_USBSTS_D_SLI_SHIFT)
+
+/* NAKI: NAK interrupt bit */
+#define USB1_USBSTS_D_NAKI_SHIFT (16)
+#define USB1_USBSTS_D_NAKI (1 << USB1_USBSTS_D_NAKI_SHIFT)
+
+/* --- USB1_USBSTS_H values ------------------------------------- */
+
+/* UI: USB interrupt */
+#define USB1_USBSTS_H_UI_SHIFT (0)
+#define USB1_USBSTS_H_UI (1 << USB1_USBSTS_H_UI_SHIFT)
+
+/* UEI: USB error interrupt */
+#define USB1_USBSTS_H_UEI_SHIFT (1)
+#define USB1_USBSTS_H_UEI (1 << USB1_USBSTS_H_UEI_SHIFT)
+
+/* PCI: Port change detect */
+#define USB1_USBSTS_H_PCI_SHIFT (2)
+#define USB1_USBSTS_H_PCI (1 << USB1_USBSTS_H_PCI_SHIFT)
+
+/* FRI: Frame list roll-over */
+#define USB1_USBSTS_H_FRI_SHIFT (3)
+#define USB1_USBSTS_H_FRI (1 << USB1_USBSTS_H_FRI_SHIFT)
+
+/* AAI: Interrupt on async advance */
+#define USB1_USBSTS_H_AAI_SHIFT (5)
+#define USB1_USBSTS_H_AAI (1 << USB1_USBSTS_H_AAI_SHIFT)
+
+/* SRI: SOF received */
+#define USB1_USBSTS_H_SRI_SHIFT (7)
+#define USB1_USBSTS_H_SRI (1 << USB1_USBSTS_H_SRI_SHIFT)
+
+/* HCH: HCHalted */
+#define USB1_USBSTS_H_HCH_SHIFT (12)
+#define USB1_USBSTS_H_HCH (1 << USB1_USBSTS_H_HCH_SHIFT)
+
+/* RCL: Reclamation */
+#define USB1_USBSTS_H_RCL_SHIFT (13)
+#define USB1_USBSTS_H_RCL (1 << USB1_USBSTS_H_RCL_SHIFT)
+
+/* PS: Periodic schedule status */
+#define USB1_USBSTS_H_PS_SHIFT (14)
+#define USB1_USBSTS_H_PS (1 << USB1_USBSTS_H_PS_SHIFT)
+
+/* AS: Asynchronous schedule status */
+#define USB1_USBSTS_H_AS_SHIFT (15)
+#define USB1_USBSTS_H_AS (1 << USB1_USBSTS_H_AS_SHIFT)
+
+/* UAI: USB host asynchronous interrupt (USBHSTASYNCINT) */
+#define USB1_USBSTS_H_UAI_SHIFT (18)
+#define USB1_USBSTS_H_UAI (1 << USB1_USBSTS_H_UAI_SHIFT)
+
+/* UPI: USB host periodic interrupt (USBHSTPERINT) */
+#define USB1_USBSTS_H_UPI_SHIFT (19)
+#define USB1_USBSTS_H_UPI (1 << USB1_USBSTS_H_UPI_SHIFT)
+
+/* --- USB1_USBINTR_D values ------------------------------------ */
+
+/* UE: USB interrupt enable */
+#define USB1_USBINTR_D_UE_SHIFT (0)
+#define USB1_USBINTR_D_UE (1 << USB1_USBINTR_D_UE_SHIFT)
+
+/* UEE: USB error interrupt enable */
+#define USB1_USBINTR_D_UEE_SHIFT (1)
+#define USB1_USBINTR_D_UEE (1 << USB1_USBINTR_D_UEE_SHIFT)
+
+/* PCE: Port change detect enable */
+#define USB1_USBINTR_D_PCE_SHIFT (2)
+#define USB1_USBINTR_D_PCE (1 << USB1_USBINTR_D_PCE_SHIFT)
+
+/* URE: USB reset enable */
+#define USB1_USBINTR_D_URE_SHIFT (6)
+#define USB1_USBINTR_D_URE (1 << USB1_USBINTR_D_URE_SHIFT)
+
+/* SRE: SOF received enable */
+#define USB1_USBINTR_D_SRE_SHIFT (7)
+#define USB1_USBINTR_D_SRE (1 << USB1_USBINTR_D_SRE_SHIFT)
+
+/* SLE: Sleep enable */
+#define USB1_USBINTR_D_SLE_SHIFT (8)
+#define USB1_USBINTR_D_SLE (1 << USB1_USBINTR_D_SLE_SHIFT)
+
+/* NAKE: NAK interrupt enable */
+#define USB1_USBINTR_D_NAKE_SHIFT (16)
+#define USB1_USBINTR_D_NAKE (1 << USB1_USBINTR_D_NAKE_SHIFT)
+
+/* --- USB1_USBINTR_H values ------------------------------------ */
+
+/* UE: USB interrupt enable */
+#define USB1_USBINTR_H_UE_SHIFT (0)
+#define USB1_USBINTR_H_UE (1 << USB1_USBINTR_H_UE_SHIFT)
+
+/* UEE: USB error interrupt enable */
+#define USB1_USBINTR_H_UEE_SHIFT (1)
+#define USB1_USBINTR_H_UEE (1 << USB1_USBINTR_H_UEE_SHIFT)
+
+/* PCE: Port change detect enable */
+#define USB1_USBINTR_H_PCE_SHIFT (2)
+#define USB1_USBINTR_H_PCE (1 << USB1_USBINTR_H_PCE_SHIFT)
+
+/* FRE: Frame list rollover enable */
+#define USB1_USBINTR_H_FRE_SHIFT (3)
+#define USB1_USBINTR_H_FRE (1 << USB1_USBINTR_H_FRE_SHIFT)
+
+/* AAE: Interrupt on asynchronous advance enable */
+#define USB1_USBINTR_H_AAE_SHIFT (5)
+#define USB1_USBINTR_H_AAE (1 << USB1_USBINTR_H_AAE_SHIFT)
+
+/* SRE: SOF received enable */
+#define USB1_USBINTR_H_SRE_SHIFT (7)
+#define USB1_USBINTR_H_SRE (1 << USB1_USBINTR_H_SRE_SHIFT)
+
+/* UAIE: USB host asynchronous interrupt enable */
+#define USB1_USBINTR_H_UAIE_SHIFT (18)
+#define USB1_USBINTR_H_UAIE (1 << USB1_USBINTR_H_UAIE_SHIFT)
+
+/* UPIA: USB host periodic interrupt enable */
+#define USB1_USBINTR_H_UPIA_SHIFT (19)
+#define USB1_USBINTR_H_UPIA (1 << USB1_USBINTR_H_UPIA_SHIFT)
+
+/* --- USB1_FRINDEX_D values ------------------------------------ */
+
+/* FRINDEX2_0: Current micro frame number */
+#define USB1_FRINDEX_D_FRINDEX2_0_SHIFT (0)
+#define USB1_FRINDEX_D_FRINDEX2_0_MASK (0x7 << USB1_FRINDEX_D_FRINDEX2_0_SHIFT)
+#define USB1_FRINDEX_D_FRINDEX2_0(x) ((x) << USB1_FRINDEX_D_FRINDEX2_0_SHIFT)
+
+/* FRINDEX13_3: Current frame number of the last frame transmitted */
+#define USB1_FRINDEX_D_FRINDEX13_3_SHIFT (3)
+#define USB1_FRINDEX_D_FRINDEX13_3_MASK \
+			(0x7ff << USB1_FRINDEX_D_FRINDEX13_3_SHIFT)
+#define USB1_FRINDEX_D_FRINDEX13_3(x) ((x) << USB1_FRINDEX_D_FRINDEX13_3_SHIFT)
+
+/* --- USB1_FRINDEX_H values ------------------------------------ */
+
+/* FRINDEX2_0: Current micro frame number */
+#define USB1_FRINDEX_H_FRINDEX2_0_SHIFT (0)
+#define USB1_FRINDEX_H_FRINDEX2_0_MASK (0x7 << USB1_FRINDEX_H_FRINDEX2_0_SHIFT)
+#define USB1_FRINDEX_H_FRINDEX2_0(x) ((x) << USB1_FRINDEX_H_FRINDEX2_0_SHIFT)
+
+/* FRINDEX12_3: Frame list current index */
+#define USB1_FRINDEX_H_FRINDEX12_3_SHIFT (3)
+#define USB1_FRINDEX_H_FRINDEX12_3_MASK \
+			(0x3ff << USB1_FRINDEX_H_FRINDEX12_3_SHIFT)
+#define USB1_FRINDEX_H_FRINDEX12_3(x) ((x) << USB1_FRINDEX_H_FRINDEX12_3_SHIFT)
+
+/* --- USB1_DEVICEADDR values ----------------------------------- */
+
+/* USBADRA: Device address advance */
+#define USB1_DEVICEADDR_USBADRA_SHIFT (24)
+#define USB1_DEVICEADDR_USBADRA (1 << USB1_DEVICEADDR_USBADRA_SHIFT)
+
+/* USBADR: USB device address */
+#define USB1_DEVICEADDR_USBADR_SHIFT (25)
+#define USB1_DEVICEADDR_USBADR_MASK (0x7f << USB1_DEVICEADDR_USBADR_SHIFT)
+#define USB1_DEVICEADDR_USBADR(x) ((x) << USB1_DEVICEADDR_USBADR_SHIFT)
+
+/* --- USB1_PERIODICLISTBASE values ----------------------------- */
+
+/* PERBASE31_12: Base Address (Low) */
+#define USB1_PERIODICLISTBASE_PERBASE31_12_SHIFT (12)
+#define USB1_PERIODICLISTBASE_PERBASE31_12_MASK \
+			(0xfffff << USB1_PERIODICLISTBASE_PERBASE31_12_SHIFT)
+#define USB1_PERIODICLISTBASE_PERBASE31_12(x) \
+			((x) << USB1_PERIODICLISTBASE_PERBASE31_12_SHIFT)
+
+/* --- USB1_ENDPOINTLISTADDR values ----------------------------- */
+
+/* EPBASE31_11: Endpoint list pointer (low) */
+#define USB1_ENDPOINTLISTADDR_EPBASE31_11_SHIFT (11)
+#define USB1_ENDPOINTLISTADDR_EPBASE31_11_MASK \
+			(0x1fffff << USB1_ENDPOINTLISTADDR_EPBASE31_11_SHIFT)
+#define USB1_ENDPOINTLISTADDR_EPBASE31_11(x) \
+			((x) << USB1_ENDPOINTLISTADDR_EPBASE31_11_SHIFT)
+
+/* --- USB1_ASYNCLISTADDR values -------------------------------- */
+
+/* ASYBASE31_5: Link pointer (Low) LPL */
+#define USB1_ASYNCLISTADDR_ASYBASE31_5_SHIFT (5)
+#define USB1_ASYNCLISTADDR_ASYBASE31_5_MASK \
+			(0x7ffffff << USB1_ASYNCLISTADDR_ASYBASE31_5_SHIFT)
+#define USB1_ASYNCLISTADDR_ASYBASE31_5(x) \
+			((x) << USB1_ASYNCLISTADDR_ASYBASE31_5_SHIFT)
+
+/* --- USB1_TTCTRL values --------------------------------------- */
+
+/* TTHA: Hub address when FS or LS device are connected directly */
+#define USB1_TTCTRL_TTHA_SHIFT (24)
+#define USB1_TTCTRL_TTHA_MASK (0x7f << USB1_TTCTRL_TTHA_SHIFT)
+#define USB1_TTCTRL_TTHA(x) ((x) << USB1_TTCTRL_TTHA_SHIFT)
+
+/* --- USB1_BURSTSIZE values ------------------------------------ */
+
+/* RXPBURST: Programmable RX burst length */
+#define USB1_BURSTSIZE_RXPBURST_SHIFT (0)
+#define USB1_BURSTSIZE_RXPBURST_MASK (0xff << USB1_BURSTSIZE_RXPBURST_SHIFT)
+#define USB1_BURSTSIZE_RXPBURST(x) ((x) << USB1_BURSTSIZE_RXPBURST_SHIFT)
+
+/* TXPBURST: Programmable TX burst length */
+#define USB1_BURSTSIZE_TXPBURST_SHIFT (8)
+#define USB1_BURSTSIZE_TXPBURST_MASK (0xff << USB1_BURSTSIZE_TXPBURST_SHIFT)
+#define USB1_BURSTSIZE_TXPBURST(x) ((x) << USB1_BURSTSIZE_TXPBURST_SHIFT)
+
+/* --- USB1_TXFILLTUNING values --------------------------------- */
+
+/* TXSCHOH: FIFO burst threshold */
+#define USB1_TXFILLTUNING_TXSCHOH_SHIFT (0)
+#define USB1_TXFILLTUNING_TXSCHOH_MASK (0xff << USB1_TXFILLTUNING_TXSCHOH_SHIFT)
+#define USB1_TXFILLTUNING_TXSCHOH(x) ((x) << USB1_TXFILLTUNING_TXSCHOH_SHIFT)
+
+/* TXSCHEATLTH: Scheduler health counter */
+#define USB1_TXFILLTUNING_TXSCHEATLTH_SHIFT (8)
+#define USB1_TXFILLTUNING_TXSCHEATLTH_MASK \
+			(0x1f << USB1_TXFILLTUNING_TXSCHEATLTH_SHIFT)
+#define USB1_TXFILLTUNING_TXSCHEATLTH(x) \
+			((x) << USB1_TXFILLTUNING_TXSCHEATLTH_SHIFT)
+
+/* TXFIFOTHRES: Scheduler overhead */
+#define USB1_TXFILLTUNING_TXFIFOTHRES_SHIFT (16)
+#define USB1_TXFILLTUNING_TXFIFOTHRES_MASK \
+			(0x3f << USB1_TXFILLTUNING_TXFIFOTHRES_SHIFT)
+#define USB1_TXFILLTUNING_TXFIFOTHRES(x) \
+			((x) << USB1_TXFILLTUNING_TXFIFOTHRES_SHIFT)
+
+/* --- USB1_ULPIVIEWPORT values --------------------------------- */
+
+/* ULPIDATWR: ULPI data write */
+#define USB1_ULPIVIEWPORT_ULPIDATWR_SHIFT (0)
+#define USB1_ULPIVIEWPORT_ULPIDATWR_MASK \
+			(0xff << USB1_ULPIVIEWPORT_ULPIDATWR_SHIFT)
+#define USB1_ULPIVIEWPORT_ULPIDATWR(x) \
+			((x) << USB1_ULPIVIEWPORT_ULPIDATWR_SHIFT)
+
+/* ULPIDATRD: ULPI data read */
+#define USB1_ULPIVIEWPORT_ULPIDATRD_SHIFT (8)
+#define USB1_ULPIVIEWPORT_ULPIDATRD_MASK \
+			(0xff << USB1_ULPIVIEWPORT_ULPIDATRD_SHIFT)
+#define USB1_ULPIVIEWPORT_ULPIDATRD(x) \
+			((x) << USB1_ULPIVIEWPORT_ULPIDATRD_SHIFT)
+
+/* ULPIADDR: ULPI read/write address */
+#define USB1_ULPIVIEWPORT_ULPIADDR_SHIFT (16)
+#define USB1_ULPIVIEWPORT_ULPIADDR_MASK \
+			(0xff << USB1_ULPIVIEWPORT_ULPIADDR_SHIFT)
+#define USB1_ULPIVIEWPORT_ULPIADDR(x) \
+			((x) << USB1_ULPIVIEWPORT_ULPIADDR_SHIFT)
+
+/* ULPIPORT: ULPI port - must be written as 0 */
+#define USB1_ULPIVIEWPORT_ULPIPORT_SHIFT (24)
+#define USB1_ULPIVIEWPORT_ULPIPORT_MASK \
+			(0x7 << USB1_ULPIVIEWPORT_ULPIPORT_SHIFT)
+#define USB1_ULPIVIEWPORT_ULPIPORT(x) \
+			((x) << USB1_ULPIVIEWPORT_ULPIPORT_SHIFT)
+
+/* ULPISS: ULPI sync state */
+#define USB1_ULPIVIEWPORT_ULPISS_SHIFT (27)
+#define USB1_ULPIVIEWPORT_ULPISS_MASK \
+			(0x1 << USB1_ULPIVIEWPORT_ULPISS_SHIFT)
+#define USB1_ULPIVIEWPORT_ULPISS(x) \
+			((x) << USB1_ULPIVIEWPORT_ULPISS_SHIFT)
+
+/* ULPIRW: ULPI read/write */
+#define USB1_ULPIVIEWPORT_ULPIRW_SHIFT (29)
+#define USB1_ULPIVIEWPORT_ULPIRW_MASK \
+			(0x1 << USB1_ULPIVIEWPORT_ULPIRW_SHIFT)
+#define USB1_ULPIVIEWPORT_ULPIRW(x) \
+			((x) << USB1_ULPIVIEWPORT_ULPIRW_SHIFT)
+
+/* ULPIRUN: ULPI read/write run */
+#define USB1_ULPIVIEWPORT_ULPIRUN_SHIFT (30)
+#define USB1_ULPIVIEWPORT_ULPIRUN_MASK \
+			(0x1 << USB1_ULPIVIEWPORT_ULPIRUN_SHIFT)
+#define USB1_ULPIVIEWPORT_ULPIRUN(x) \
+			((x) << USB1_ULPIVIEWPORT_ULPIRUN_SHIFT)
+
+/* ULPIWU: ULPI wake-up */
+#define USB1_ULPIVIEWPORT_ULPIWU_SHIFT (31)
+#define USB1_ULPIVIEWPORT_ULPIWU_MASK \
+			(0x1 << USB1_ULPIVIEWPORT_ULPIWU_SHIFT)
+#define USB1_ULPIVIEWPORT_ULPIWU(x) \
+			((x) << USB1_ULPIVIEWPORT_ULPIWU_SHIFT)
+
+/* --- USB1_BINTERVAL values ------------------------------------ */
+
+/* BINT: bInterval value */
+#define USB1_BINTERVAL_BINT_SHIFT (0)
+#define USB1_BINTERVAL_BINT_MASK (0xf << USB1_BINTERVAL_BINT_SHIFT)
+#define USB1_BINTERVAL_BINT(x) ((x) << USB1_BINTERVAL_BINT_SHIFT)
+
+/* --- USB1_ENDPTNAK values ------------------------------------- */
+
+/* EPRN: Rx endpoint NAK */
+#define USB1_ENDPTNAK_EPRN_SHIFT (0)
+#define USB1_ENDPTNAK_EPRN_MASK (0xf << USB1_ENDPTNAK_EPRN_SHIFT)
+#define USB1_ENDPTNAK_EPRN(x) ((x) << USB1_ENDPTNAK_EPRN_SHIFT)
+
+/* EPTN: Tx endpoint NAK */
+#define USB1_ENDPTNAK_EPTN_SHIFT (16)
+#define USB1_ENDPTNAK_EPTN_MASK (0xf << USB1_ENDPTNAK_EPTN_SHIFT)
+#define USB1_ENDPTNAK_EPTN(x) ((x) << USB1_ENDPTNAK_EPTN_SHIFT)
+
+/* --- USB1_ENDPTNAKEN values ----------------------------------- */
+
+/* EPRNE: Rx endpoint NAK enable */
+#define USB1_ENDPTNAKEN_EPRNE_SHIFT (0)
+#define USB1_ENDPTNAKEN_EPRNE_MASK (0xf << USB1_ENDPTNAKEN_EPRNE_SHIFT)
+#define USB1_ENDPTNAKEN_EPRNE(x) ((x) << USB1_ENDPTNAKEN_EPRNE_SHIFT)
+
+/* EPTNE: Tx endpoint NAK */
+#define USB1_ENDPTNAKEN_EPTNE_SHIFT (16)
+#define USB1_ENDPTNAKEN_EPTNE_MASK (0xf << USB1_ENDPTNAKEN_EPTNE_SHIFT)
+#define USB1_ENDPTNAKEN_EPTNE(x) ((x) << USB1_ENDPTNAKEN_EPTNE_SHIFT)
+
+/* --- USB1_PORTSC1_D values ------------------------------------ */
+
+/* CCS: Current connect status */
+#define USB1_PORTSC1_D_CCS_SHIFT (0)
+#define USB1_PORTSC1_D_CCS (1 << USB1_PORTSC1_D_CCS_SHIFT)
+
+/* PE: Port enable */
+#define USB1_PORTSC1_D_PE_SHIFT (2)
+#define USB1_PORTSC1_D_PE (1 << USB1_PORTSC1_D_PE_SHIFT)
+
+/* PEC: Port enable/disable change */
+#define USB1_PORTSC1_D_PEC_SHIFT (3)
+#define USB1_PORTSC1_D_PEC (1 << USB1_PORTSC1_D_PEC_SHIFT)
+
+/* FPR: Force port resume */
+#define USB1_PORTSC1_D_FPR_SHIFT (6)
+#define USB1_PORTSC1_D_FPR (1 << USB1_PORTSC1_D_FPR_SHIFT)
+
+/* SUSP: Suspend */
+#define USB1_PORTSC1_D_SUSP_SHIFT (7)
+#define USB1_PORTSC1_D_SUSP (1 << USB1_PORTSC1_D_SUSP_SHIFT)
+
+/* PR: Port reset */
+#define USB1_PORTSC1_D_PR_SHIFT (8)
+#define USB1_PORTSC1_D_PR (1 << USB1_PORTSC1_D_PR_SHIFT)
+
+/* HSP: High-speed status */
+#define USB1_PORTSC1_D_HSP_SHIFT (9)
+#define USB1_PORTSC1_D_HSP (1 << USB1_PORTSC1_D_HSP_SHIFT)
+
+/* PIC1_0: Port indicator control */
+#define USB1_PORTSC1_D_PIC1_0_SHIFT (14)
+#define USB1_PORTSC1_D_PIC1_0_MASK (0x3 << USB1_PORTSC1_D_PIC1_0_SHIFT)
+#define USB1_PORTSC1_D_PIC1_0(x) ((x) << USB1_PORTSC1_D_PIC1_0_SHIFT)
+
+/* PTC3_0: Port test control */
+#define USB1_PORTSC1_D_PTC3_0_SHIFT (16)
+#define USB1_PORTSC1_D_PTC3_0_MASK (0xf << USB1_PORTSC1_D_PTC3_0_SHIFT)
+#define USB1_PORTSC1_D_PTC3_0(x) ((x) << USB1_PORTSC1_D_PTC3_0_SHIFT)
+
+/* PHCD: PHY low power suspend - clock disable (PLPSCD) */
+#define USB1_PORTSC1_D_PHCD_SHIFT (23)
+#define USB1_PORTSC1_D_PHCD (1 << USB1_PORTSC1_D_PHCD_SHIFT)
+
+/* PFSC: Port force full speed connect */
+#define USB1_PORTSC1_D_PFSC_SHIFT (24)
+#define USB1_PORTSC1_D_PFSC (1 << USB1_PORTSC1_D_PFSC_SHIFT)
+
+/* PSPD: Port speed */
+#define USB1_PORTSC1_D_PSPD_SHIFT (26)
+#define USB1_PORTSC1_D_PSPD_MASK (0x3 << USB1_PORTSC1_D_PSPD_SHIFT)
+#define USB1_PORTSC1_D_PSPD(x) ((x) << USB1_PORTSC1_D_PSPD_SHIFT)
+
+/* --- USB1_PORTSC1_H values ------------------------------------ */
+
+/* CCS: Current connect status */
+#define USB1_PORTSC1_H_CCS_SHIFT (0)
+#define USB1_PORTSC1_H_CCS (1 << USB1_PORTSC1_H_CCS_SHIFT)
+
+/* CSC: Connect status change */
+#define USB1_PORTSC1_H_CSC_SHIFT (1)
+#define USB1_PORTSC1_H_CSC (1 << USB1_PORTSC1_H_CSC_SHIFT)
+
+/* PE: Port enable */
+#define USB1_PORTSC1_H_PE_SHIFT (2)
+#define USB1_PORTSC1_H_PE (1 << USB1_PORTSC1_H_PE_SHIFT)
+
+/* PEC: Port disable/enable change */
+#define USB1_PORTSC1_H_PEC_SHIFT (3)
+#define USB1_PORTSC1_H_PEC (1 << USB1_PORTSC1_H_PEC_SHIFT)
+
+/* OCA: Over-current active */
+#define USB1_PORTSC1_H_OCA_SHIFT (4)
+#define USB1_PORTSC1_H_OCA (1 << USB1_PORTSC1_H_OCA_SHIFT)
+
+/* OCC: Over-current change */
+#define USB1_PORTSC1_H_OCC_SHIFT (5)
+#define USB1_PORTSC1_H_OCC (1 << USB1_PORTSC1_H_OCC_SHIFT)
+
+/* FPR: Force port resume */
+#define USB1_PORTSC1_H_FPR_SHIFT (6)
+#define USB1_PORTSC1_H_FPR (1 << USB1_PORTSC1_H_FPR_SHIFT)
+
+/* SUSP: Suspend */
+#define USB1_PORTSC1_H_SUSP_SHIFT (7)
+#define USB1_PORTSC1_H_SUSP (1 << USB1_PORTSC1_H_SUSP_SHIFT)
+
+/* PR: Port reset */
+#define USB1_PORTSC1_H_PR_SHIFT (8)
+#define USB1_PORTSC1_H_PR (1 << USB1_PORTSC1_H_PR_SHIFT)
+
+/* HSP: High-speed status */
+#define USB1_PORTSC1_H_HSP_SHIFT (9)
+#define USB1_PORTSC1_H_HSP (1 << USB1_PORTSC1_H_HSP_SHIFT)
+
+/* LS: Line status */
+#define USB1_PORTSC1_H_LS_SHIFT (10)
+#define USB1_PORTSC1_H_LS_MASK (0x3 << USB1_PORTSC1_H_LS_SHIFT)
+#define USB1_PORTSC1_H_LS(x) ((x) << USB1_PORTSC1_H_LS_SHIFT)
+
+/* PP: Port power control */
+#define USB1_PORTSC1_H_PP_SHIFT (12)
+#define USB1_PORTSC1_H_PP (1 << USB1_PORTSC1_H_PP_SHIFT)
+
+/* PIC1_0: Port indicator control */
+#define USB1_PORTSC1_H_PIC1_0_SHIFT (14)
+#define USB1_PORTSC1_H_PIC1_0_MASK (0x3 << USB1_PORTSC1_H_PIC1_0_SHIFT)
+#define USB1_PORTSC1_H_PIC1_0(x) ((x) << USB1_PORTSC1_H_PIC1_0_SHIFT)
+
+/* PTC3_0: Port test control */
+#define USB1_PORTSC1_H_PTC3_0_SHIFT (16)
+#define USB1_PORTSC1_H_PTC3_0_MASK (0xf << USB1_PORTSC1_H_PTC3_0_SHIFT)
+#define USB1_PORTSC1_H_PTC3_0(x) ((x) << USB1_PORTSC1_H_PTC3_0_SHIFT)
+
+/* WKCN: Wake on connect enable (WKCNNT_E) */
+#define USB1_PORTSC1_H_WKCN_SHIFT (20)
+#define USB1_PORTSC1_H_WKCN (1 << USB1_PORTSC1_H_WKCN_SHIFT)
+
+/* WKDC: Wake on disconnect enable (WKDSCNNT_E) */
+#define USB1_PORTSC1_H_WKDC_SHIFT (21)
+#define USB1_PORTSC1_H_WKDC (1 << USB1_PORTSC1_H_WKDC_SHIFT)
+
+/* WKOC: Wake on over-current enable (WKOC_E) */
+#define USB1_PORTSC1_H_WKOC_SHIFT (22)
+#define USB1_PORTSC1_H_WKOC (1 << USB1_PORTSC1_H_WKOC_SHIFT)
+
+/* PHCD: PHY low power suspend - clock disable (PLPSCD) */
+#define USB1_PORTSC1_H_PHCD_SHIFT (23)
+#define USB1_PORTSC1_H_PHCD (1 << USB1_PORTSC1_H_PHCD_SHIFT)
+
+/* PFSC: Port force full speed connect */
+#define USB1_PORTSC1_H_PFSC_SHIFT (24)
+#define USB1_PORTSC1_H_PFSC (1 << USB1_PORTSC1_H_PFSC_SHIFT)
+
+/* PSPD: Port speed */
+#define USB1_PORTSC1_H_PSPD_SHIFT (26)
+#define USB1_PORTSC1_H_PSPD_MASK (0x3 << USB1_PORTSC1_H_PSPD_SHIFT)
+#define USB1_PORTSC1_H_PSPD(x) ((x) << USB1_PORTSC1_H_PSPD_SHIFT)
+
+/* --- USB1_USBMODE_D values ------------------------------------ */
+
+/* CM1_0: Controller mode */
+#define USB1_USBMODE_D_CM1_0_SHIFT (0)
+#define USB1_USBMODE_D_CM1_0_MASK (0x3 << USB1_USBMODE_D_CM1_0_SHIFT)
+#define USB1_USBMODE_D_CM1_0(x) ((x) << USB1_USBMODE_D_CM1_0_SHIFT)
+
+/* ES: Endian select */
+#define USB1_USBMODE_D_ES_SHIFT (2)
+#define USB1_USBMODE_D_ES (1 << USB1_USBMODE_D_ES_SHIFT)
+
+/* SLOM: Setup Lockout mode */
+#define USB1_USBMODE_D_SLOM_SHIFT (3)
+#define USB1_USBMODE_D_SLOM (1 << USB1_USBMODE_D_SLOM_SHIFT)
+
+/* SDIS: Setup Lockout mode */
+#define USB1_USBMODE_D_SDIS_SHIFT (4)
+#define USB1_USBMODE_D_SDIS (1 << USB1_USBMODE_D_SDIS_SHIFT)
+
+/* --- USB1_USBMODE_H values ------------------------------------ */
+
+/* CM: Controller mode */
+#define USB1_USBMODE_H_CM_SHIFT (0)
+#define USB1_USBMODE_H_CM_MASK (0x3 << USB1_USBMODE_H_CM_SHIFT)
+#define USB1_USBMODE_H_CM(x) ((x) << USB1_USBMODE_H_CM_SHIFT)
+
+/* ES: Endian select */
+#define USB1_USBMODE_H_ES_SHIFT (2)
+#define USB1_USBMODE_H_ES (1 << USB1_USBMODE_H_ES_SHIFT)
+
+/* SDIS: Stream disable mode */
+#define USB1_USBMODE_H_SDIS_SHIFT (4)
+#define USB1_USBMODE_H_SDIS (1 << USB1_USBMODE_H_SDIS_SHIFT)
+
+/* VBPS: VBUS power select */
+#define USB1_USBMODE_H_VBPS_SHIFT (5)
+#define USB1_USBMODE_H_VBPS (1 << USB1_USBMODE_H_VBPS_SHIFT)
+
+/* --- USB1_ENDPTSETUPSTAT values ------------------------------- */
+
+/* ENDPSETUPSTAT: Setup endpoint status for logical endpoints 0 to 3 */
+#define USB1_ENDPTSETUPSTAT_ENDPTSETUPSTAT_SHIFT (0)
+#define USB1_ENDPTSETUPSTAT_ENDPTSETUPSTAT_MASK \
+			(0xf << USB1_ENDPTSETUPSTAT_ENDPTSETUPSTAT_SHIFT)
+#define USB1_ENDPTSETUPSTAT_ENDPTSETUPSTAT(x) \
+			((x) << USB1_ENDPTSETUPSTAT_ENDPTSETUPSTAT_SHIFT)
+
+/* --- USB1_ENDPTPRIME values ----------------------------------- */
+
+/* PERB: Prime endpoint receive buffer for physical OUT endpoints 3 to 0 */
+#define USB1_ENDPTPRIME_PERB_SHIFT (0)
+#define USB1_ENDPTPRIME_PERB_MASK (0xf << USB1_ENDPTPRIME_PERB_SHIFT)
+#define USB1_ENDPTPRIME_PERB(x) ((x) << USB1_ENDPTPRIME_PERB_SHIFT)
+
+/* PETB: Prime endpoint transmit buffer for physical IN endpoints 3 to 0 */
+#define USB1_ENDPTPRIME_PETB_SHIFT (16)
+#define USB1_ENDPTPRIME_PETB_MASK (0xf << USB1_ENDPTPRIME_PETB_SHIFT)
+#define USB1_ENDPTPRIME_PETB(x) ((x) << USB1_ENDPTPRIME_PETB_SHIFT)
+
+/* --- USB1_ENDPTFLUSH values ----------------------------------- */
+
+/* FERB: Flush endpoint receive buffer for physical OUT endpoints 3 to 0 */
+#define USB1_ENDPTFLUSH_FERB_SHIFT (0)
+#define USB1_ENDPTFLUSH_FERB_MASK (0xf << USB1_ENDPTFLUSH_FERB_SHIFT)
+#define USB1_ENDPTFLUSH_FERB(x) ((x) << USB1_ENDPTFLUSH_FERB_SHIFT)
+
+/* FETB: Flush endpoint transmit buffer for physical IN endpoints 3 to 0 */
+#define USB1_ENDPTFLUSH_FETB_SHIFT (16)
+#define USB1_ENDPTFLUSH_FETB_MASK (0xf << USB1_ENDPTFLUSH_FETB_SHIFT)
+#define USB1_ENDPTFLUSH_FETB(x) ((x) << USB1_ENDPTFLUSH_FETB_SHIFT)
+
+/* --- USB1_ENDPTSTAT values ------------------------------------ */
+
+/* ERBR: Endpoint receive buffer ready for physical OUT endpoints 3 to 0 */
+#define USB1_ENDPTSTAT_ERBR_SHIFT (0)
+#define USB1_ENDPTSTAT_ERBR_MASK (0xf << USB1_ENDPTSTAT_ERBR_SHIFT)
+#define USB1_ENDPTSTAT_ERBR(x) ((x) << USB1_ENDPTSTAT_ERBR_SHIFT)
+
+/* ETBR: Endpoint transmit buffer ready for physical IN endpoints 3 to 0 */
+#define USB1_ENDPTSTAT_ETBR_SHIFT (16)
+#define USB1_ENDPTSTAT_ETBR_MASK (0xf << USB1_ENDPTSTAT_ETBR_SHIFT)
+#define USB1_ENDPTSTAT_ETBR(x) ((x) << USB1_ENDPTSTAT_ETBR_SHIFT)
+
+/* --- USB1_ENDPTCOMPLETE values -------------------------------- */
+
+/* ERCE: Endpoint receive complete event for physical OUT endpoints 3 to 0 */
+#define USB1_ENDPTCOMPLETE_ERCE_SHIFT (0)
+#define USB1_ENDPTCOMPLETE_ERCE_MASK (0xf << USB1_ENDPTCOMPLETE_ERCE_SHIFT)
+#define USB1_ENDPTCOMPLETE_ERCE(x) ((x) << USB1_ENDPTCOMPLETE_ERCE_SHIFT)
+
+/* ETCE: Endpoint transmit complete event for physical IN endpoints 3 to 0 */
+#define USB1_ENDPTCOMPLETE_ETCE_SHIFT (16)
+#define USB1_ENDPTCOMPLETE_ETCE_MASK (0xf << USB1_ENDPTCOMPLETE_ETCE_SHIFT)
+#define USB1_ENDPTCOMPLETE_ETCE(x) ((x) << USB1_ENDPTCOMPLETE_ETCE_SHIFT)
+
+/* --- USB1_ENDPTCTRL0 values ----------------------------------- */
+
+/* RXS: Rx endpoint stall */
+#define USB1_ENDPTCTRL0_RXS_SHIFT (0)
+#define USB1_ENDPTCTRL0_RXS (1 << USB1_ENDPTCTRL0_RXS_SHIFT)
+
+/* RXT1_0: Endpoint type */
+#define USB1_ENDPTCTRL0_RXT1_0_SHIFT (2)
+#define USB1_ENDPTCTRL0_RXT1_0_MASK (0x3 << USB1_ENDPTCTRL0_RXT1_0_SHIFT)
+#define USB1_ENDPTCTRL0_RXT1_0(x) ((x) << USB1_ENDPTCTRL0_RXT1_0_SHIFT)
+
+/* RXE: Rx endpoint enable */
+#define USB1_ENDPTCTRL0_RXE_SHIFT (7)
+#define USB1_ENDPTCTRL0_RXE (1 << USB1_ENDPTCTRL0_RXE_SHIFT)
+
+/* TXS: Tx endpoint stall */
+#define USB1_ENDPTCTRL0_TXS_SHIFT (16)
+#define USB1_ENDPTCTRL0_TXS (1 << USB1_ENDPTCTRL0_TXS_SHIFT)
+
+/* TXT1_0: Endpoint type */
+#define USB1_ENDPTCTRL0_TXT1_0_SHIFT (18)
+#define USB1_ENDPTCTRL0_TXT1_0_MASK (0x3 << USB1_ENDPTCTRL0_TXT1_0_SHIFT)
+#define USB1_ENDPTCTRL0_TXT1_0(x) ((x) << USB1_ENDPTCTRL0_TXT1_0_SHIFT)
+
+/* TXE: Tx endpoint enable */
+#define USB1_ENDPTCTRL0_TXE_SHIFT (23)
+#define USB1_ENDPTCTRL0_TXE (1 << USB1_ENDPTCTRL0_TXE_SHIFT)
+
+/* --- USB1_ENDPTCTRL1 values ----------------------------------- */
+
+/* RXS: Rx endpoint stall */
+#define USB1_ENDPTCTRL1_RXS_SHIFT (0)
+#define USB1_ENDPTCTRL1_RXS (1 << USB1_ENDPTCTRL1_RXS_SHIFT)
+
+/* RXT: Endpoint type */
+#define USB1_ENDPTCTRL1_RXT_SHIFT (2)
+#define USB1_ENDPTCTRL1_RXT_MASK (0x3 << USB1_ENDPTCTRL1_RXT_SHIFT)
+#define USB1_ENDPTCTRL1_RXT(x) ((x) << USB1_ENDPTCTRL1_RXT_SHIFT)
+
+/* RXI: Rx data toggle inhibit */
+#define USB1_ENDPTCTRL1_RXI_SHIFT (5)
+#define USB1_ENDPTCTRL1_RXI (1 << USB1_ENDPTCTRL1_RXI_SHIFT)
+
+/* RXR: Rx data toggle reset */
+#define USB1_ENDPTCTRL1_RXR_SHIFT (6)
+#define USB1_ENDPTCTRL1_RXR (1 << USB1_ENDPTCTRL1_RXR_SHIFT)
+
+/* RXE: Rx endpoint enable */
+#define USB1_ENDPTCTRL1_RXE_SHIFT (7)
+#define USB1_ENDPTCTRL1_RXE (1 << USB1_ENDPTCTRL1_RXE_SHIFT)
+
+/* TXS: Tx endpoint stall */
+#define USB1_ENDPTCTRL1_TXS_SHIFT (16)
+#define USB1_ENDPTCTRL1_TXS (1 << USB1_ENDPTCTRL1_TXS_SHIFT)
+
+/* TXT1_0: Tx Endpoint type */
+#define USB1_ENDPTCTRL1_TXT1_0_SHIFT (18)
+#define USB1_ENDPTCTRL1_TXT1_0_MASK (0x3 << USB1_ENDPTCTRL1_TXT1_0_SHIFT)
+#define USB1_ENDPTCTRL1_TXT1_0(x) ((x) << USB1_ENDPTCTRL1_TXT1_0_SHIFT)
+
+/* TXI: Tx data toggle inhibit */
+#define USB1_ENDPTCTRL1_TXI_SHIFT (21)
+#define USB1_ENDPTCTRL1_TXI (1 << USB1_ENDPTCTRL1_TXI_SHIFT)
+
+/* TXR: Tx data toggle reset */
+#define USB1_ENDPTCTRL1_TXR_SHIFT (22)
+#define USB1_ENDPTCTRL1_TXR (1 << USB1_ENDPTCTRL1_TXR_SHIFT)
+
+/* TXE: Tx endpoint enable */
+#define USB1_ENDPTCTRL1_TXE_SHIFT (23)
+#define USB1_ENDPTCTRL1_TXE (1 << USB1_ENDPTCTRL1_TXE_SHIFT)
+
+/* --- USB1_ENDPTCTRL2 values ----------------------------------- */
+
+/* RXS: Rx endpoint stall */
+#define USB1_ENDPTCTRL2_RXS_SHIFT (0)
+#define USB1_ENDPTCTRL2_RXS (1 << USB1_ENDPTCTRL2_RXS_SHIFT)
+
+/* RXT: Endpoint type */
+#define USB1_ENDPTCTRL2_RXT_SHIFT (2)
+#define USB1_ENDPTCTRL2_RXT_MASK (0x3 << USB1_ENDPTCTRL2_RXT_SHIFT)
+#define USB1_ENDPTCTRL2_RXT(x) ((x) << USB1_ENDPTCTRL2_RXT_SHIFT)
+
+/* RXI: Rx data toggle inhibit */
+#define USB1_ENDPTCTRL2_RXI_SHIFT (5)
+#define USB1_ENDPTCTRL2_RXI (1 << USB1_ENDPTCTRL2_RXI_SHIFT)
+
+/* RXR: Rx data toggle reset */
+#define USB1_ENDPTCTRL2_RXR_SHIFT (6)
+#define USB1_ENDPTCTRL2_RXR (1 << USB1_ENDPTCTRL2_RXR_SHIFT)
+
+/* RXE: Rx endpoint enable */
+#define USB1_ENDPTCTRL2_RXE_SHIFT (7)
+#define USB1_ENDPTCTRL2_RXE (1 << USB1_ENDPTCTRL2_RXE_SHIFT)
+
+/* TXS: Tx endpoint stall */
+#define USB1_ENDPTCTRL2_TXS_SHIFT (16)
+#define USB1_ENDPTCTRL2_TXS (1 << USB1_ENDPTCTRL2_TXS_SHIFT)
+
+/* TXT1_0: Tx Endpoint type */
+#define USB1_ENDPTCTRL2_TXT1_0_SHIFT (18)
+#define USB1_ENDPTCTRL2_TXT1_0_MASK (0x3 << USB1_ENDPTCTRL2_TXT1_0_SHIFT)
+#define USB1_ENDPTCTRL2_TXT1_0(x) ((x) << USB1_ENDPTCTRL2_TXT1_0_SHIFT)
+
+/* TXI: Tx data toggle inhibit */
+#define USB1_ENDPTCTRL2_TXI_SHIFT (21)
+#define USB1_ENDPTCTRL2_TXI (1 << USB1_ENDPTCTRL2_TXI_SHIFT)
+
+/* TXR: Tx data toggle reset */
+#define USB1_ENDPTCTRL2_TXR_SHIFT (22)
+#define USB1_ENDPTCTRL2_TXR (1 << USB1_ENDPTCTRL2_TXR_SHIFT)
+
+/* TXE: Tx endpoint enable */
+#define USB1_ENDPTCTRL2_TXE_SHIFT (23)
+#define USB1_ENDPTCTRL2_TXE (1 << USB1_ENDPTCTRL2_TXE_SHIFT)
+
+/* --- USB1_ENDPTCTRL3 values ----------------------------------- */
+
+/* RXS: Rx endpoint stall */
+#define USB1_ENDPTCTRL3_RXS_SHIFT (0)
+#define USB1_ENDPTCTRL3_RXS (1 << USB1_ENDPTCTRL3_RXS_SHIFT)
+
+/* RXT: Endpoint type */
+#define USB1_ENDPTCTRL3_RXT_SHIFT (2)
+#define USB1_ENDPTCTRL3_RXT_MASK (0x3 << USB1_ENDPTCTRL3_RXT_SHIFT)
+#define USB1_ENDPTCTRL3_RXT(x) ((x) << USB1_ENDPTCTRL3_RXT_SHIFT)
+
+/* RXI: Rx data toggle inhibit */
+#define USB1_ENDPTCTRL3_RXI_SHIFT (5)
+#define USB1_ENDPTCTRL3_RXI (1 << USB1_ENDPTCTRL3_RXI_SHIFT)
+
+/* RXR: Rx data toggle reset */
+#define USB1_ENDPTCTRL3_RXR_SHIFT (6)
+#define USB1_ENDPTCTRL3_RXR (1 << USB1_ENDPTCTRL3_RXR_SHIFT)
+
+/* RXE: Rx endpoint enable */
+#define USB1_ENDPTCTRL3_RXE_SHIFT (7)
+#define USB1_ENDPTCTRL3_RXE (1 << USB1_ENDPTCTRL3_RXE_SHIFT)
+
+/* TXS: Tx endpoint stall */
+#define USB1_ENDPTCTRL3_TXS_SHIFT (16)
+#define USB1_ENDPTCTRL3_TXS (1 << USB1_ENDPTCTRL3_TXS_SHIFT)
+
+/* TXT1_0: Tx Endpoint type */
+#define USB1_ENDPTCTRL3_TXT1_0_SHIFT (18)
+#define USB1_ENDPTCTRL3_TXT1_0_MASK (0x3 << USB1_ENDPTCTRL3_TXT1_0_SHIFT)
+#define USB1_ENDPTCTRL3_TXT1_0(x) ((x) << USB1_ENDPTCTRL3_TXT1_0_SHIFT)
+
+/* TXI: Tx data toggle inhibit */
+#define USB1_ENDPTCTRL3_TXI_SHIFT (21)
+#define USB1_ENDPTCTRL3_TXI (1 << USB1_ENDPTCTRL3_TXI_SHIFT)
+
+/* TXR: Tx data toggle reset */
+#define USB1_ENDPTCTRL3_TXR_SHIFT (22)
+#define USB1_ENDPTCTRL3_TXR (1 << USB1_ENDPTCTRL3_TXR_SHIFT)
+
+/* TXE: Tx endpoint enable */
+#define USB1_ENDPTCTRL3_TXE_SHIFT (23)
+#define USB1_ENDPTCTRL3_TXE (1 << USB1_ENDPTCTRL3_TXE_SHIFT)
+
+/* -------------------------------------------------------------- */
+
+
+/* --- USB1_ENDPTCTRL common values ----------------------------- */
+
+/* RXS: Rx endpoint stall */
+#define USB1_ENDPTCTRL_RXS_SHIFT (0)
+#define USB1_ENDPTCTRL_RXS (1 << USB1_ENDPTCTRL_RXS_SHIFT)
+
+/* RXT: Endpoint type */
+#define USB1_ENDPTCTRL_RXT_SHIFT (2)
+#define USB1_ENDPTCTRL_RXT_MASK (0x3 << USB1_ENDPTCTRL_RXT_SHIFT)
+#define USB1_ENDPTCTRL_RXT(x) ((x) << USB1_ENDPTCTRL_RXT_SHIFT)
+
+/* RXI: Rx data toggle inhibit */
+#define USB1_ENDPTCTRL_RXI_SHIFT (5)
+#define USB1_ENDPTCTRL_RXI (1 << USB1_ENDPTCTRL_RXI_SHIFT)
+
+/* RXR: Rx data toggle reset */
+#define USB1_ENDPTCTRL_RXR_SHIFT (6)
+#define USB1_ENDPTCTRL_RXR (1 << USB1_ENDPTCTRL_RXR_SHIFT)
+
+/* RXE: Rx endpoint enable */
+#define USB1_ENDPTCTRL_RXE_SHIFT (7)
+#define USB1_ENDPTCTRL_RXE (1 << USB1_ENDPTCTRL_RXE_SHIFT)
+
+/* TXS: Tx endpoint stall */
+#define USB1_ENDPTCTRL_TXS_SHIFT (16)
+#define USB1_ENDPTCTRL_TXS (1 << USB1_ENDPTCTRL_TXS_SHIFT)
+
+/* TXT1_0: Tx Endpoint type */
+#define USB1_ENDPTCTRL_TXT1_0_SHIFT (18)
+#define USB1_ENDPTCTRL_TXT1_0_MASK (0x3 << USB1_ENDPTCTRL_TXT1_0_SHIFT)
+#define USB1_ENDPTCTRL_TXT1_0(x) ((x) << USB1_ENDPTCTRL_TXT1_0_SHIFT)
+
+/* TXI: Tx data toggle inhibit */
+#define USB1_ENDPTCTRL_TXI_SHIFT (21)
+#define USB1_ENDPTCTRL_TXI (1 << USB1_ENDPTCTRL_TXI_SHIFT)
+
+/* TXR: Tx data toggle reset */
+#define USB1_ENDPTCTRL_TXR_SHIFT (22)
+#define USB1_ENDPTCTRL_TXR (1 << USB1_ENDPTCTRL_TXR_SHIFT)
+
+/* TXE: Tx endpoint enable */
+#define USB1_ENDPTCTRL_TXE_SHIFT (23)
+#define USB1_ENDPTCTRL_TXE (1 << USB1_ENDPTCTRL_TXE_SHIFT)
+
 
 #ifdef __cplusplus
 }
