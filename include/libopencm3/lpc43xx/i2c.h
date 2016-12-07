@@ -165,13 +165,13 @@ void i2c_init(i2c_port_t port, const uint16_t duty_cycle_count);
 void i2c_disable(i2c_port_t port);
 void i2c_tx_start(i2c_port_t port);
 void i2c_tx_byte(i2c_port_t port, uint8_t byte);
-uint8_t i2c_rx_byte(i2c_port_t port);
+uint8_t i2c_rx_byte(i2c_port_t port, bool ack);
 void i2c_stop(i2c_port_t port);
 
 void i2c0_init(const uint16_t duty_cycle_count);
 void i2c0_tx_start(void);
 void i2c0_tx_byte(uint8_t byte);
-uint8_t i2c0_rx_byte(void);
+uint8_t i2c0_rx_byte(bool ack);
 void i2c0_stop(void);
 
 void i2c1_init(const uint16_t duty_cycle_count);
