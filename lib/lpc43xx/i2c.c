@@ -101,7 +101,7 @@ void i2c_tx_byte(i2c_port_t port, uint8_t byte)
 }
 
 /* receive data byte */
-uint8_t i2c_rx_byte(i2c_port_t port)
+uint8_t i2c_rx_byte(i2c_port_t port, bool ack)
 {
 	uint32_t timeout;
 
@@ -109,6 +109,12 @@ uint8_t i2c_rx_byte(i2c_port_t port)
 		I2C_CONCLR(port) = I2C_CONCLR_STAC;
 	}
 	I2C_CONCLR(port) = I2C_CONCLR_SIC;
+
+	if (ack) {
+		I2C_CONSET(port) = I2C_CONSET_AA;
+	} else {
+		I2C_CONCLR(port) = I2C_CONCLR_AAC;
+	}
 
 	timeout = 0;
 	while( (!(I2C_CONSET(port) & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT) )
@@ -130,7 +136,6 @@ void i2c_stop(i2c_port_t port)
 }
 
 /* I2C0 wrappers for compatibility with old code */
-
 void i2c0_init(const uint16_t duty_cycle_count)
 {
 	/* enable input on SCL and SDA pins */
@@ -173,37 +178,13 @@ void i2c1_tx_byte(uint8_t byte)
 }
 
 /* receive data byte */
-uint8_t i2c0_rx_byte(void)
-{
-	return i2c_rx_byte(I2C0);
+uint8_t i2c0_rx_byte(bool ack) {
+	return i2c_rx_byte(I2C0, ack);
 }
 
-/* receive data byte (ack=1 => ACK if ack=0 NACK) */
-uint8_t i2c1_rx_byte(bool ack)
-{
-	uint32_t timeout;
-
-	if (I2C1_CONSET & I2C_CONSET_STA)
-	{
-		I2C1_CONCLR = I2C_CONCLR_STAC;
-	}
-
-	if (ack)
-	{
-		I2C1_CONSET = I2C_CONSET_AA;
-	} else
-	{
-		I2C1_CONCLR = I2C_CONCLR_AAC;
-	}
-
-	I2C1_CONCLR = I2C_CONCLR_SIC;
-	timeout = 0;
-	while( (!(I2C1_CONSET & I2C_CONSET_SI)) && (timeout < I2C_TIMEOUT) )
-	{
-		timeout++;
-	}
-
-	return I2C1_DAT;
+/* receive data byte */
+uint8_t i2c1_rx_byte(bool ack) {
+	return i2c_rx_byte(I2C1, ack);
 }
 
 /* transmit stop bit */
