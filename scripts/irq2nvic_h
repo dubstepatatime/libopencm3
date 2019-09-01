@@ -110,7 +110,7 @@ template_cmsis_h = '''\
 '''
 
 def convert(infile, outfile_nvic, outfile_vectornvic, outfile_cmsis):
-    data = yaml.load(infile)
+    data = yaml.safe_load(infile)
 
     irq2name = list(enumerate(data['irqs']) if isinstance(data['irqs'], list) else data['irqs'].items())
     irqnames = [v for (k,v) in irq2name]
