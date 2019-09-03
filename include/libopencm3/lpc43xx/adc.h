@@ -57,6 +57,28 @@ extern "C" {
 #define ADC0_CR                         ADC_CR(ADC0)
 #define ADC1_CR                         ADC_CR(ADC1)
 
+#define ADC_CR_SEL_SHIFT (0)
+#define ADC_CR_SEL(x) ((x) << ADC_CR_SEL_SHIFT)
+
+#define ADC_CR_CLKDIV_SHIFT (8)
+#define ADC_CR_CLKDIV(x) ((x) << ADC_CR_CLKDIV_SHIFT)
+
+#define ADC_CR_BURST_SHIFT (16)
+#define ADC_CR_BURST (1 << ADC_CR_BURST_SHIFT)
+
+#define ADC_CR_CLKS_SHIFT (17)
+#define ADC_CR_CLKS(x) ((x) << ADC_CR_CLKS_SHIFT)
+
+#define ADC_CR_PDN_SHIFT (21)
+#define ADC_CR_PDN (1 << ADC_CR_PDN_SHIFT)
+
+#define ADC_CR_START_SHIFT (24)
+#define ADC_CR_START(x) ((x) << ADC_CR_START_SHIFT)
+
+#define ADC_CR_EDGE_SHIFT (27)
+#define ADC_CR_EDGE (1 << ADC_CR_EDGE_SHIFT)
+
+
 /* A/D Global Data Register */
 #define ADC_GDR(port)                   MMIO32(port + 0x004)
 #define ADC0_GDR                        ADC_GDR(ADC0)
@@ -107,10 +129,34 @@ extern "C" {
 #define ADC0_DR7                        ADC_DR7(ADC0)
 #define ADC1_DR7                        ADC_DR7(ADC1)
 
+#define ADC_DR_VVREF_SHIFT (6)
+#define ADC_DR_VVREF (1 << ADC_DR_VVREF_SHIFT)
+
+#define ADC_DR_OVERRUN_SHIFT (30)
+#define ADC_DR_OVERRUN (1 << ADC_DR_OVERRUN_SHIFT)
+
+#define ADC_DR_DONE_SHIFT (31)
+#define ADC_DR_DONE (1 << ADC_DR_DONE_SHIFT)
+
 /* A/D Status Register */
 #define ADC_STAT(port)                  MMIO32(port + 0x030)
 #define ADC0_STAT                       ADC_STAT(ADC0)
 #define ADC1_STAT                       ADC_STAT(ADC1)
+
+typedef enum {
+	ADC0_NUM = 0x0,
+	ADC1_NUM = 0x1
+} adc_num_t;
+
+BEGIN_DECLS
+
+void adc_disable(adc_num_t adc_num);
+void adc_init(adc_num_t adc_num, uint8_t pins, uint8_t clkdiv, uint8_t clks);
+void adc_start(adc_num_t adc_num);
+void adc_read_to_buffer(adc_num_t adc_num, uint8_t pin, uint8_t *buf,
+						uint16_t buf_len);
+
+END_DECLS
 
 /**@}*/
 
